@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <your-ecr-uri>
+  build:
+    commands:
+      - echo Building Docker image...
+      - docker build -t wildrydes-app .
+      - docker tag wildrydes-app:latest <your-ecr-uri>:latest
+  post_build:
+    commands:
+      - echo Pushing image to ECR...
+      - docker push <your-ecr-uri>:latest
+      - echo Writing imagedefinitions.json...
+      - printf '[{"name":"wildrydes-container","imageUri":"%s"}]' <your-ecr-uri>:latest > imagedefinitions.json
+artifacts:
+  files:
+    - imagedefinitions.json
