@@ -1,21 +1,33 @@
 version: 0.2
 
 phases:
-  pre_build:
+  install:
+    runtime-versions:
+      docker: 18
     commands:
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <your-ecr-uri>
+      # Install the AWS CLI
+      - echo Installing AWS CLI
+      - pip install --upgrade awscli
+      # Authenticate Docker to Amazon ECR
+      - echo Logging in to Amazon ECR
+      - $(aws ecr get-login --no-include-email --region $AWS_REGION)
   build:
     commands:
-      - echo Building Docker image...
+      - echo Build started on `date`
+      - echo Building the Docker image...
       - docker build -t wildrydes-app .
-      - docker tag wildrydes-app:latest <your-ecr-uri>:latest
+      - echo Tagging the Docker image with the ECR URI
+      - docker tag wildrydes-app:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/wildrydes-repo:latest
   post_build:
     commands:
-      - echo Pushing image to ECR...
-      - docker push <your-ecr-uri>:latest
-      - echo Writing imagedefinitions.json...
-      - printf '[{"name":"wildrydes-container","imageUri":"%s"}]' <your-ecr-uri>:latest > imagedefinitions.json
+      - echo Pushing the Docker image to Amazon ECR
+      - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/wildrydes-repo:latest
+      - echo Image URI: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/wildrydes-repo:latest
+
 artifacts:
-  files:
-    - imagedefinitions.json
+  files: '**/*'
+  discard-paths: yes
+
+cache:
+  paths:
+    - '/root/.m2/**/*'
