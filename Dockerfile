@@ -1,5 +1,17 @@
-FROM python:3.8-slim
-COPY . /app
+# Use official Python base image
+FROM python:3.9-slim
+
+# Set working directory
 WORKDIR /app
-RUN pip install flask
+
+# Copy source code
+COPY . .
+
+# Install dependencies
+RUN pip install -r requirements.txt
+
+# Expose port 80
+EXPOSE 80
+
+# Run the application
 CMD ["python", "app.py"]
