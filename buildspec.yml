@@ -13,19 +13,15 @@ phases:
   build:
     commands:
       - echo "Build started on $(date)"
-      - echo "Listing files in the current directory:"
-      - ls -l
-      - echo "Building Docker image..."
+      - ls -l  # List files to make sure the Dockerfile is there
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
       - echo "Docker build completed."
 
   post_build:
     commands:
       - echo "Build completed on $(date)"
-      - echo "Pushing the image to ECR..."
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo "Docker push completed."
-      - echo "Writing image definitions..."
       - printf '[{"name":"wildrydes-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 
 artifacts:
