@@ -3,18 +3,21 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - cat buildspec.yml
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 686255968572.dkr.ecr.us-east-1.amazonaws.com
       - REPOSITORY_URI="686255968572.dkr.ecr.us-east-1.amazonaws.com/devops"
-      - "IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)"  # <-- Quoted
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - echo "Repository URI: $REPOSITORY_URI"
       - echo "Image Tag: $IMAGE_TAG"
+
   build:
     commands:
       - echo "Build started on $(date)"
-      - ls -l
+      - ls -l  # List files to make sure the Dockerfile is there
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
       - echo "Docker build completed."
+
   post_build:
     commands:
       - echo "Build completed on $(date)"
