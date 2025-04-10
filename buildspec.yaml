@@ -5,19 +5,20 @@ phases:
     commands:
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 904233128713.dkr.ecr.us-east-1.amazonaws.com
-      - REPOSITORY_URI="904233128713.dkr.ecr.us-east-1.amazonaws.com/wild-rydes-app"
+      - REPOSITORY_URI=904233128713.dkr.ecr.us-east-1.amazonaws.com/wild-rydes-app
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-
   build:
     commands:
       - echo "Build started on $(date)"
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
-
+      - echo "Docker build completed"
   post_build:
     commands:
       - echo "Build completed on $(date)"
+      - docker images
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo "Writing image definitions..."
+      - echo "Pushed to ECR successfully"
+      - echo Writing image definitions...
       - printf '[{"name":"wildrydes-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 
 artifacts:
