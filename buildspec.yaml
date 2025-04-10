@@ -10,16 +10,14 @@ phases:
   build:
     commands:
       - echo "Build started on $(date)"
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
-      - echo "Docker build completed"
+      - docker build -t 904233128713.dkr.ecr.us-east-1.amazonaws.com/wild-rydes-app:$IMAGE_TAG .
   post_build:
     commands:
       - echo "Build completed on $(date)"
-      - docker images
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push 904233128713.dkr.ecr.us-east-1.amazonaws.com/wild-rydes-app:$IMAGE_TAG
       - echo "Pushed to ECR successfully"
       - echo Writing image definitions...
-      - printf '[{"name":"wildrydes-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"wildrydes-container","imageUri":"904233128713.dkr.ecr.us-east-1.amazonaws.com/wild-rydes-app:%s"}]' $IMAGE_TAG > imagedefinitions.json
 
 artifacts:
   files:
