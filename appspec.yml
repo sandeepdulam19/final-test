@@ -3,7 +3,7 @@ Resources:
   - TargetService:
       Type: AWS::ECS::Service
       Properties:
-        TaskDefinition: "<task-def-arn>"
+        TaskDefinition: "REPLACED_AT_DEPLOY_TIME"
         LoadBalancerInfo:
           ContainerName: "wildrydes-container"
           ContainerPort: 80
