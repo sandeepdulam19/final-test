@@ -14,7 +14,7 @@ phases:
     commands:
       - echo "Build started on $(date)"
       - echo "Listing files in the current directory:"
-      - ls -l # List files in the current directory to verify Dockerfile and context
+      - ls -l
       - echo "Building Docker image..."
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
       - echo "Docker build completed."
